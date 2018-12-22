@@ -12,6 +12,13 @@ list_t *list_new()
     return list;
 }
 
+void list_free(list_t *list)
+{
+    list_clear(list);
+
+    free(list);
+}
+
 void list_push(list_t *list, void *data)
 {
     assert(list);
@@ -72,4 +79,17 @@ void *list_strip(list_t *list)
     free(node);
 
     return data;
+}
+
+void list_clear(list_t *list)
+{
+    node_t *node = list->first;
+
+    while (node) {
+        node_t *next = node->next;
+
+        free(node);
+
+        node = next;
+    }
 }
