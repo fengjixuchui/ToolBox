@@ -28,7 +28,11 @@ void list_push(list_t *list, void *data)
 
     node->data = data;
     node->next = list->first;
+
     list->first = node;
+    if (!list->last) {
+        list->last = node;
+    }
 
     ++list->size;
 }
@@ -42,7 +46,11 @@ void list_append(list_t *list, void *data)
 
     node->data = data;
     node->prev = list->last;
+
     list->last = node;
+    if (!list->first) {
+        list->first = node;
+    }
 
     ++list->size;
 }
@@ -56,6 +64,9 @@ void *list_pop(list_t *list)
     void *data = node->data;
 
     list->first = node->next;
+    if (!list->first) {
+        list->last = NULL;
+    }
 
     --list->size;
 
@@ -73,6 +84,9 @@ void *list_strip(list_t *list)
     void *data = node->data;
 
     list->last = node->prev;
+    if (!list->last) {
+        list->first= NULL;
+    }
 
     --list->size;
 
@@ -92,4 +106,6 @@ void list_clear(list_t *list)
 
         node = next;
     }
+
+    list->first = list->last = NULL;
 }
