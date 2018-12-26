@@ -5,6 +5,6 @@ add_executable(list.test
 )
 
 target_link_libraries(list.test
-    criterion
     list
+    criterion
 )
