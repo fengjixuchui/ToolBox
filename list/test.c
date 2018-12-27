@@ -11,6 +11,8 @@ Test(list, new) {
     cr_assert(list);
     cr_assert(!list->first && !list->last);
     cr_assert(!list->size);
+
+    list_free(list);
 }
 
 Test(list, push) {
@@ -30,6 +32,8 @@ Test(list, push) {
     cr_assert(list->last != node);
     cr_assert(*(int *)node->data == e2);
     cr_assert(list->size == 2);
+
+    list_free(list);
 }
 
 Test(list, pop) {
@@ -53,6 +57,8 @@ Test(list, pop) {
 
     /* Check if the list is empty */
     cr_assert(!list->first && !list->last);
+
+    list_free(list);
 }
 
 Test(list, append) {
@@ -62,8 +68,8 @@ Test(list, append) {
     int e2 = 2;
 
     list_append(list, &e);
-    struct node *node = list->first;
-    cr_assert(list->last == node);
+    struct node *node = list->last;
+    cr_assert(list->first == node);
     cr_assert(*(int *)node->data == e);
     cr_assert(list->size == 1);
 
@@ -72,6 +78,8 @@ Test(list, append) {
     cr_assert(list->first != node);
     cr_assert(*(int *)node->data == e2);
     cr_assert(list->size == 2);
+
+    list_free(list);
 }
 
 Test(list, strip) {
@@ -95,6 +103,8 @@ Test(list, strip) {
 
     /* Check if the list is empty */
     cr_assert(!list->first && !list->last);
+
+    list_free(list);
 }
 
 Test(list, clear) {
@@ -108,4 +118,6 @@ Test(list, clear) {
 
     /* Check if the list is empty */
     cr_assert(!list->first && !list->last);
+
+    list_free(list);
 }
