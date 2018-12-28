@@ -6,7 +6,8 @@ add_compile_options(-Wall -Wextra -std=c99)
 add_subdirectory(list)
 
 add_custom_target(test ALL
-    COMMAND ${CMAKE_SOURCE_DIR}/test.sh
-    DEPENDS list.test
-    COMMENT "Running test ..."
+     COMMAND ${CMAKE_SOURCE_DIR}/test.sh
+     DEPENDS list list.test
+     COMMENT "Running test ..."
 )
+
