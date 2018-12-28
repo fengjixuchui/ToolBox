@@ -28,6 +28,9 @@ void list_push(list_t *list, void *data)
 
     node->data = data;
     node->next = list->first;
+    if (node->next) {
+        node->next->prev = node;
+    }
 
     list->first = node;
     if (!list->last) {
@@ -46,6 +49,9 @@ void list_append(list_t *list, void *data)
 
     node->data = data;
     node->prev = list->last;
+    if (node->prev) {
+        node->prev->next = node;
+    }
 
     list->last = node;
     if (!list->first) {
