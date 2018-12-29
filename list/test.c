@@ -58,12 +58,12 @@ Test(list, pop) {
     list_push(list, &e2);
 
     int *p = list_pop(list);
-    cr_assert(*p == 2);
+    cr_assert(*p == e2);
     cr_assert(list->size == 1);
     cr_assert(list->first == list->last);
 
     p = list_pop(list);
-    cr_assert(*p == 1);
+    cr_assert(*p == e);
     cr_assert(list->size == 0);
     cr_assert(list->first == list->last);
 
@@ -116,12 +116,12 @@ Test(list, strip) {
     list_append(list, &e2);
 
     int *p = list_strip(list);
-    cr_assert(*p == 2);
+    cr_assert(*p == e2);
     cr_assert(list->size == 1);
     cr_assert(list->first == list->last);
 
     p = list_strip(list);
-    cr_assert(*p == 1);
+    cr_assert(*p == e);
     cr_assert(list->size == 0);
     cr_assert(list->first == list->last);
 
@@ -129,6 +129,73 @@ Test(list, strip) {
     cr_assert(!list->first && !list->last);
 
     list_free(list);
+}
+
+Test(list, insert) {
+    list_t *list = list_new();
+
+    int e = 1;
+    int e2 = 2;
+    int e3 = 3;
+
+    list_push(list, &e);
+    list_append(list, &e3);
+
+    list_insert(list, 1, &e2);
+    struct node *node = list->first->next;
+    /* Test reverse linkage */
+    cr_assert(list->last->prev == node);
+    /* Test interconnexion between nodes */
+    cr_assert(node->prev == list->first && node->next == list->last);
+    cr_assert(list->first->next == node && list->last->prev == node);
+    /* Check stored value */
+    cr_assert(*(int *)node->data == e2);
+    /* Check order */
+    cr_assert(*(int *)list->first->data == e && *(int *)list->last->data == e3);
+    /* Check list size */
+    cr_assert(list->size == 3);
+
+    free(list);
+}
+
+Test(list, get) {
+    list_t *list = list_new();
+
+    int e = 1;
+    int e2 = 2;
+    int e3 = 3;
+
+    list_append(list, &e);
+    list_append(list, &e2);
+    list_append(list, &e3);
+
+    int *p = list_get(list, 1);
+    /* Check stored value */
+    cr_assert(*p == e2);
+
+    free(list);
+}
+
+Test(list, remove) {
+    list_t *list = list_new();
+
+    int e = 1;
+    int e2 = 2;
+    int e3 = 3;
+
+    list_append(list, &e);
+    list_append(list, &e2);
+    list_append(list, &e3);
+
+    int *p = list_remove(list, 1);
+    /* Check stored value */
+    cr_assert(*p == e2);
+    /* Test interconnexion between nodes */
+    cr_assert(list->first->next == list->last && list->last->prev == list->first);
+    /* Check list size */
+    cr_assert(list->size == 2);
+
+    free(list);
 }
 
 Test(list, clear) {
