@@ -28,6 +28,7 @@ void list_free(list_t *list)
 static node_t *node_new(node_t *prev, node_t *next, void *data)
 {
     node_t *node = calloc(1, sizeof(*node));
+    assert(node);
 
     node->prev = prev;
     node->next = next;
@@ -99,14 +100,7 @@ void list_push(list_t *list, void *data)
 {
     assert(list);
 
-    node_t *node = calloc(1, sizeof(*node));
-    assert(node);
-
-    node->data = data;
-    node->next = list->first;
-    if (node->next) {
-        node->next->prev = node;
-    }
+    node_t *node = node_new(NULL, list->first, data);
 
     list->first = node;
     if (!list->last) {
@@ -120,14 +114,7 @@ void list_append(list_t *list, void *data)
 {
     assert(list);
 
-    node_t *node = calloc(1, sizeof(*node));
-    assert(node);
-
-    node->data = data;
-    node->prev = list->last;
-    if (node->prev) {
-        node->prev->next = node;
-    }
+    node_t *node = node_new(list->last, NULL, data);
 
     list->last = node;
     if (!list->first) {
@@ -175,6 +162,9 @@ void *list_pop(list_t *list)
     if (!list->first) {
         list->last = NULL;
     }
+    else {
+        list->first->prev = NULL;
+    }
 
     --list->size;
 
@@ -194,6 +184,9 @@ void *list_strip(list_t *list)
     list->last = node->prev;
     if (!list->last) {
         list->first= NULL;
+    }
+    else {
+        list->last->next = NULL;
     }
 
     --list->size;
