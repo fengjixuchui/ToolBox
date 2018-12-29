@@ -8,9 +8,29 @@ TestSuite(list);
 Test(list, new) {
     list_t *list = list_new();
 
+    /* No null return value */
     cr_assert(list);
+    /* List empty */
     cr_assert(!list->first && !list->last);
     cr_assert(!list->size);
+
+    list_free(list);
+}
+
+Test(list, get) {
+    list_t *list = list_new();
+
+    int e = 1;
+    int e2 = 2;
+    int e3 = 3;
+
+    list_append(list, &e);
+    list_append(list, &e2);
+    list_append(list, &e3);
+
+    int *p = list_get(list, 1);
+    /* Check stored value */
+    cr_assert(*p == e2);
 
     list_free(list);
 }
@@ -58,14 +78,20 @@ Test(list, pop) {
     list_push(list, &e2);
 
     int *p = list_pop(list);
+    /* Check stored value */
     cr_assert(*p == e2);
-    cr_assert(list->size == 1);
+    /* Check list extremity */
+    cr_assert(!list->first->prev);
+    /* Test if the first node is pointed by first and last */
     cr_assert(list->first == list->last);
+    /* Check list size */
+    cr_assert(list->size == 1);
 
     p = list_pop(list);
+    /* Check stored value */
     cr_assert(*p == e);
+    /* Check list size */
     cr_assert(list->size == 0);
-    cr_assert(list->first == list->last);
 
     /* Check if the list is empty */
     cr_assert(!list->first && !list->last);
@@ -116,14 +142,20 @@ Test(list, strip) {
     list_append(list, &e2);
 
     int *p = list_strip(list);
+    /* Check stored value */
     cr_assert(*p == e2);
+    /* Test extremity of list*/
+    cr_assert(!list->last->next);
+    /* Check list size */
     cr_assert(list->size == 1);
+    /* Test if the first node is pointed by first and last */
     cr_assert(list->first == list->last);
 
     p = list_strip(list);
+    /* Check stored value */
     cr_assert(*p == e);
+    /* Check list size */
     cr_assert(list->size == 0);
-    cr_assert(list->first == list->last);
 
     /* Check if the list is empty */
     cr_assert(!list->first && !list->last);
@@ -155,25 +187,7 @@ Test(list, insert) {
     /* Check list size */
     cr_assert(list->size == 3);
 
-    free(list);
-}
-
-Test(list, get) {
-    list_t *list = list_new();
-
-    int e = 1;
-    int e2 = 2;
-    int e3 = 3;
-
-    list_append(list, &e);
-    list_append(list, &e2);
-    list_append(list, &e3);
-
-    int *p = list_get(list, 1);
-    /* Check stored value */
-    cr_assert(*p == e2);
-
-    free(list);
+    list_free(list);
 }
 
 Test(list, remove) {
@@ -195,7 +209,7 @@ Test(list, remove) {
     /* Check list size */
     cr_assert(list->size == 2);
 
-    free(list);
+    list_free(list);
 }
 
 Test(list, clear) {
