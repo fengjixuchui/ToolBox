@@ -33,6 +33,14 @@ static node_t *node_new(node_t *prev, node_t *next, void *data)
     node->next = next;
     node->data = data;
 
+    if (prev) {
+        prev->next = node;
+    }
+
+    if (next) {
+        next->prev = node;
+    }
+
     return node;
 }
 
@@ -83,6 +91,7 @@ static node_t *list_get_node(list_t *list, size_t index)
 void *list_get(list_t *list, size_t index)
 {
     node_t *node = list_get_node(list, index);
+
     return node->data;
 }
 
@@ -149,9 +158,9 @@ void list_insert(list_t *list, size_t index, void *data)
 
     node_t *ith = list_get_node(list, index);
 
-    node_t *node = node_new(ith->prev, ith, data);
+    node_new(ith->prev, ith, data);
 
-    ith->prev = node;
+    ++list->size;
 }
 
 void *list_pop(list_t *list)
@@ -217,6 +226,8 @@ void *list_remove(list_t *list, size_t index)
     void *data = node->data;
 
     node_free(node);
+
+    --list->size;
 
     return data;
 }
