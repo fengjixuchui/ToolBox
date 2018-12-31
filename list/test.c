@@ -209,6 +209,14 @@ Test(list, remove) {
     /* Check list size */
     cr_assert(list->size == 2);
 
+    p = list_remove(list, 1);
+    /* Check stored value */
+    cr_assert(*p == e3);
+
+    p = list_remove(list, 0);
+    /* Check stored value */
+    cr_assert(*p == e);
+
     list_free(list);
 }
 
