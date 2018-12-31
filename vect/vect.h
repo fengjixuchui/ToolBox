@@ -30,6 +30,6 @@ void *vect_pop(vect_t *vect);
 /* Pop the last element of the list */
 void *vect_strip(vect_t *vect);
 /* Remove element at specified index */
-void *vect_remove(vect_t *list, size_t index);
+void *vect_remove(vect_t *vect, size_t index);
 
 #endif
