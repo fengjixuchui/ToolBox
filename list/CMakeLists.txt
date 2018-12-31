@@ -1,7 +1,7 @@
 add_library(list list.c)
 
 add_executable(list.test
-    test.c
+    list_test.c
     list.c
 )
 
