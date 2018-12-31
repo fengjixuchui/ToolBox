@@ -43,6 +43,8 @@ Test(vect, push) {
     vect_push(vect, &e2);
     /*Check stored value */
     cr_assert(*(int *)vect->data[0] == e2);
+    /* Check displacement of old value */
+    cr_assert(*(int *)vect->data[1] == e);
     /* Check vect size and capacity */
     cr_assert(vect->size == 2 && vect->capacity == 2);
 
@@ -61,6 +63,8 @@ Test(vect, pop) {
     int *p = vect_pop(vect);
     /* Check stored value */
     cr_assert(*p == e2);
+    /* Check displacement of tail value */
+    cr_assert(*(int *)vect->data[vect->size - 1] == e);
     /* Check vect size and capacity */
     cr_assert(vect->size == 1 && vect->capacity == 2);
 
@@ -89,6 +93,8 @@ Test(vect, append) {
     vect_append(vect, &e2);
     /* Check stored value */
     cr_assert(*(int *)vect->data[1] == e2);
+    /* Check displacement of old value */
+    cr_assert(*(int *)vect->data[0] == e);
     /* Check vect size and capacity */
     cr_assert(vect->size == 2 && vect->capacity == 2);
 
@@ -136,6 +142,8 @@ Test(vect, insert) {
     vect_insert(vect, 1, &e3);
     /* Check stored value */
     cr_assert(*(int *)vect->data[1] == e3);
+    /* Check displacement of old value */
+    cr_assert(*(int *)vect->data[0] == e);
     /* Check vect size and capacity */
     cr_assert(vect->size == 2 && vect->capacity == 2);
 
@@ -143,6 +151,7 @@ Test(vect, insert) {
     /* Check stored value */
     cr_assert(*(int *)vect->data[1] == e2);
     /* Check displacement of old value */
+    cr_assert(*(int *)vect->data[0] == e);
     cr_assert(*(int *)vect->data[2] == e3);
     /* Check vect size and capacity */
     cr_assert(vect->size == 3 && vect->capacity == 4);
@@ -164,12 +173,16 @@ Test(vect, remove) {
     int *p = vect_remove(vect, 1);
     /* Check stored value */
     cr_assert(*p == e2);
+    /* Check displacement of tail value */
+    cr_assert(*(int *)vect->data[vect->size - 1] == e3);
     /* Check vect size and capacity */
     cr_assert(vect->size == 2 && vect->capacity == 4);
 
     p = vect_remove(vect, 1);
     /* Check stored value */
     cr_assert(*p == e3);
+    /* Check displacement of tail value */
+    cr_assert(*(int *)vect->data[vect->size - 1] == e);
     /* Check vect size and capacity */
     cr_assert(vect->size == 1 && vect->capacity == 4);
 
