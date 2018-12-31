@@ -4,10 +4,11 @@ project (ToolBox LANGUAGES C)
 add_compile_options(-Wall -Wextra -std=c99)
 
 add_subdirectory(list)
+add_subdirectory(vect)
 
 add_custom_target(test ALL
      COMMAND ${CMAKE_SOURCE_DIR}/test.sh
-     DEPENDS list list.test
+     DEPENDS list list.test vect vect.test
      COMMENT "Running test ..."
 )
 
