@@ -80,6 +80,10 @@ void vect_insert(vect_t *vect, size_t index, void *data)
 
 void *vect_pop(vect_t *vect)
 {
+    if (!vect->size) {
+        return NULL;
+    }
+
     void *data = vect->data[0];
 
     memmove(vect->data, vect->data + 1, (vect->size - 1) * sizeof(*vect->data));
@@ -91,11 +95,19 @@ void *vect_pop(vect_t *vect)
 
 void *vect_strip(vect_t *vect)
 {
+    if (!vect->size) {
+        return NULL;
+    }
+
     return vect->data[--vect->size];
 }
 
 void *vect_remove(vect_t *vect, size_t index)
 {
+    if (!vect->size) {
+        return NULL;
+    }
+
     void *data = vect->data[index];
 
     memmove(vect->data + index, vect->data + index + 1,
