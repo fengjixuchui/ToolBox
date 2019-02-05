@@ -4,11 +4,16 @@
 #include <stddef.h>
 
 /* An htab need an hash function given by the user */
+struct htab_elm {
+    size_t key;
+    void *data;
+};
+
 struct htab {
     size_t cap;
     size_t size;
     size_t (*hfunc)(void *);
-    void *data;
+    struct htab_elm *tab;
 };
 
 typedef struct htab htab_t;
