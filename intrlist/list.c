@@ -63,3 +63,8 @@ list_t *list_remove(list_t *elm)
 
     return elm;
 }
+
+bool list_isempty(list_t *list)
+{
+    return list->next == list && list->prev == list;
+}

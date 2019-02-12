@@ -2,6 +2,7 @@
 #define LIST_H
 
 #include <stddef.h>
+#include <stdbool.h>
 
 struct list {
     struct list *prev;
@@ -37,5 +38,7 @@ void list_append(list_t *list, list_t *node);
 list_t *list_remove(list_t *elm);
 #define list_pop(list) list_remove((list)->next)
 #define list_strip(list) list_remove((list)->prev)
+
+bool list_isempty(list_t *list);
 
 #endif
