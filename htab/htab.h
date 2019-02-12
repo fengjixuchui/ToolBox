@@ -4,19 +4,21 @@
 #include <stddef.h>
 #include <stdbool.h>
 
+#include "../intrlist/list.h"
+
 /* An htab need an hash function given by the user */
-struct htab_elm {
-    size_t key;
-    void *data;
-    struct htab_elm *next;
+struct bucket {
+    void *elm;
+    list_t list;
 };
 
 struct htab {
     size_t cap;
     size_t size;
+    size_t nb_elm;
     size_t (*hfunc)(void *);
     bool (*cmpfunc)(void *, void *);
-    struct htab_elm **tab;
+    struct bucket *tab;
 };
 
 typedef struct htab htab_t;
@@ -27,10 +29,10 @@ htab_t *htab_new(size_t (*hfunc)(void *), bool (*cmpfunc)(void *, void *));
 void htab_free(htab_t *htab);
 
 /* Add a new element in the htab */
-void htab_add(htab_t *htab, void *data);
+void htab_add(htab_t *htab, void *elm);
 /* Remove an element of the htab */
-void *htab_del(htab_t *htab, void *data);
+void *htab_del(htab_t *htab, void *elm);
 /* Find a match in the htab */
-void *htab_find(htab_t *htab, void *data);
+void *htab_find(htab_t *htab, void *elm);
 
 #endif

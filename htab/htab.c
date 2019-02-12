@@ -4,8 +4,9 @@
 
 #include "htab.h"
 
-static struct htab_elm *elm_new(size_t key, void *data, struct htab_elm *next);
-static inline struct htab_elm *head_elm(htab_t *htab, size_t index);
+static void htab_extend(htab_t *htab);
+static struct bucket *elm_new(void *elm);
+static inline struct bucket *head_elm(htab_t *htab, size_t index);
 
 htab_t *htab_new(size_t (*hfunc)(void *), bool (*cmpfunc)(void *, void *))
 {
@@ -15,65 +16,66 @@ htab_t *htab_new(size_t (*hfunc)(void *), bool (*cmpfunc)(void *, void *))
 
     htab->cap = 1;
     htab->size = 0;
+    htab->nb_elm = 0;
     htab->hfunc = hfunc;
     htab->cmpfunc = cmpfunc;
 
     htab->tab = calloc(htab->cap, sizeof(*htab->tab));
 
+    for (size_t i = 0; i < htab->cap; ++i) {
+        list_init(&htab->tab[i].list);
+    }
+
     return htab;
 }
 
-void htab_add(htab_t *htab, void *data)
+void htab_add(htab_t *htab, void *elm)
 {
     assert(htab);
-    assert(data);
+    assert(elm);
 
     /* If the htab is full, extend */
     if (htab->size == htab->cap) {
-
+        htab_extend(htab);
     }
 
-    /* Index from hfunc */
-    size_t index = htab->hfunc(data) % htab->cap;
+    /* Compute index, create new element and find the head */
+    size_t index = htab->hfunc(elm) % htab->cap;
+    struct bucket *buck = elm_new(elm);
+    struct bucket *head = head_elm(htab, index);
 
-    /* Get head of list */
-    struct htab_elm *elm = head_elm(htab, index);
-    if (!elm) {
-        /* Fill new space */
-        htab->tab[index] = elm_new(index, data, NULL);
+    if (list_isempty(&head->list)) {
+        ++htab->size;
     }
     else {
-        /* Push front */
-        elm->next = elm_new(index, data, elm->next);
-        assert(elm->next);
+        /* Cheak for doublon */
+        struct bucket *buck_for;
+        list_foreach(&head->list, buck_for, list) {
+            if (htab->cmpfunc(buck->elm, buck_for->elm)) {
+                free(buck);
+                return;
+            }
+        }
     }
+
+    /* No doublon or empty bucket */
+    list_push(&head->list, &buck->list);
+    ++htab->nb_elm;
 }
 
-void *htab_del(htab_t *htab, void *data)
+static struct bucket *elm_new(void *elm)
 {
-    size_t index = htab->hfunc(data) % htab->cap;
+    struct bucket *buck = malloc(sizeof(*buck));
+    if (!elm) {
+        return NULL;
+    }
 
-    struct htab_elm *elm = head_elm(htab, index);
+    buck->elm = elm;
 
-
+    return buck;
 }
 
-
-static struct htab_elm *elm_new(size_t key, void *data, struct htab_elm *next)
+static inline struct bucket *head_elm(htab_t *htab, size_t index)
 {
-    assert(data);
-    assert(next);
-
-    struct htab_elm *elm = malloc(sizeof(*elm));
-
-    elm->key = key;
-    elm->data = data;
-    elm->next = next;
-
-    return elm;
-}
-
-static inline struct htab_elm *head_elm(htab_t *htab, size_t index)
-{
-    return htab->tab[index];
+    return &htab->tab[index];
 }
