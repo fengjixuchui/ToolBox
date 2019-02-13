@@ -1,7 +1,7 @@
 add_library(intrlist intrlist.c)
 
 add_executable(intrlist.test
-    test.c
+    intrlist_test.c
     intrlist.c
 )
 
