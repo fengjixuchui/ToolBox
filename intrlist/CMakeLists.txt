@@ -1,8 +1,8 @@
-add_library(intrlist list.c)
+add_library(intrlist intrlist.c)
 
 add_executable(intrlist.test
     test.c
-    list.c
+    intrlist.c
 )
 
 target_link_libraries(intrlist.test

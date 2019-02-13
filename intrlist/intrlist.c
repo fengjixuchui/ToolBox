@@ -2,11 +2,11 @@
 
 #include <assert.h>
 
-#include "list.h"
+#include "intrlist.h"
 
-list_t *list_new()
+intrlist_t *intrlist_new()
 {
-    list_t *list = malloc(sizeof(*list));
+    intrlist_t *list = malloc(sizeof(*list));
 
     if (!list) {
         return NULL;
@@ -18,13 +18,13 @@ list_t *list_new()
     return list;
 }
 
-void list_init(list_t *list)
+void intrlist_init(intrlist_t *list)
 {
     list->prev = list;
     list->next = list;
 }
 
-void list_push(list_t *list, list_t *node)
+void intrlist_push(intrlist_t *list, intrlist_t *node)
 {
     assert(list);
     assert(node);
@@ -35,8 +35,7 @@ void list_push(list_t *list, list_t *node)
     node->next->prev = node;
 }
 
-
-void list_append(list_t *list, list_t *node)
+void intrlist_append(intrlist_t *list, intrlist_t *node)
 {
     assert(list);
     assert(node);
@@ -47,7 +46,7 @@ void list_append(list_t *list, list_t *node)
     node->prev->next = node;
 }
 
-list_t *list_remove(list_t *elm)
+intrlist_t *intrlist_remove(intrlist_t *elm)
 {
     assert(elm);
 
@@ -64,7 +63,7 @@ list_t *list_remove(list_t *elm)
     return elm;
 }
 
-bool list_isempty(list_t *list)
+bool intrlist_isempty(intrlist_t *list)
 {
     return list->next == list && list->prev == list;
 }

@@ -4,12 +4,12 @@
 #include <stddef.h>
 #include <stdbool.h>
 
-#include "../intrlist/list.h"
+#include "../intrlist/intrlist.h"
 
 /* An htab need an hash function given by the user */
 struct bucket {
     void *elm;
-    list_t list;
+    intrlist_t list;
 };
 
 struct htab {

@@ -23,7 +23,7 @@ htab_t *htab_new(size_t (*hfunc)(void *), bool (*cmpfunc)(void *, void *))
     htab->tab = calloc(htab->cap, sizeof(*htab->tab));
 
     for (size_t i = 0; i < htab->cap; ++i) {
-        list_init(&htab->tab[i].list);
+        intrlist_init(&htab->tab[i].list);
     }
 
     return htab;
@@ -44,13 +44,13 @@ void htab_add(htab_t *htab, void *elm)
     struct bucket *buck = elm_new(elm);
     struct bucket *head = head_elm(htab, index);
 
-    if (list_isempty(&head->list)) {
+    if (intrlist_isempty(&head->list)) {
         ++htab->size;
     }
     else {
         /* Cheak for doublon */
         struct bucket *buck_for;
-        list_foreach(&head->list, buck_for, list) {
+        intrlist_foreach(&head->list, buck_for, list) {
             if (htab->cmpfunc(buck->elm, buck_for->elm)) {
                 free(buck);
                 return;
@@ -59,7 +59,7 @@ void htab_add(htab_t *htab, void *elm)
     }
 
     /* No doublon or empty bucket */
-    list_push(&head->list, &buck->list);
+    intrlist_push(&head->list, &buck->list);
     ++htab->nb_elm;
 }
 
