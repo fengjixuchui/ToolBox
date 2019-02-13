@@ -5,11 +5,12 @@ target_link_libraries(htab
 )
 
 add_executable(htab.test
-    htab_test.c
     htab.c
+    htab_test.c
 )
 
 target_link_libraries(htab.test
+    intrlist
     criterion
     -fsanitize=address
     -fno-omit-frame-pointer
