@@ -8,6 +8,7 @@
 
 /* An htab need an hash function given by the user */
 struct bucket {
+    void *key;
     void *elm;
     intrlist_t list;
 };
@@ -29,10 +30,10 @@ htab_t *htab_new(size_t (*hfunc)(void *), bool (*cmpfunc)(void *, void *));
 void htab_free(htab_t *htab);
 
 /* Add a new element in the htab */
-void htab_add(htab_t *htab, void *elm);
-/* Remove an element of the htab */
-void *htab_del(htab_t *htab, void *elm);
+void htab_add(htab_t *htab, void *key, void *elm);
 /* Find a match in the htab */
-void *htab_find(htab_t *htab, void *elm);
+void *htab_find(htab_t *htab, void *key);
+/* Remove an element of the htab */
+void *htab_del(htab_t *htab, void *rey);
 
 #endif
