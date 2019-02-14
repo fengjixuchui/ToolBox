@@ -4,6 +4,7 @@
 
 #include "htab.h"
 
+static struct bucket *buck_tab_new(size_t cap);
 static void htab_extend(htab_t *htab);
 static struct bucket *buck_new(void *key, void *elm);
 static inline struct bucket *head_buck(htab_t *htab, size_t index);
@@ -21,7 +22,7 @@ htab_t *htab_new(size_t (*hfunc)(void *), bool (*cmpfunc)(void *, void *))
     htab->hfunc = hfunc;
     htab->cmpfunc = cmpfunc;
 
-    htab->tab = calloc(htab->cap, sizeof(*htab->tab));
+    htab->tab = buck_tab_new(htab->cap);
 
     for (size_t i = 0; i < htab->cap; ++i) {
         intrlist_init(&htab->tab[i].list);
@@ -30,11 +31,16 @@ htab_t *htab_new(size_t (*hfunc)(void *), bool (*cmpfunc)(void *, void *))
     return htab;
 }
 
+void htab_free(htab_t *htab)
+{
+    free(htab->tab);
+    free(htab);
+}
+
 void htab_add(htab_t *htab, void *key, void *elm)
 {
     assert(htab);
     assert(key);
-    assert(elm);
 
     /* If the htab is full, extend */
     if (htab->size == htab->cap) {
@@ -104,33 +110,36 @@ static struct bucket *find_buck(htab_t *htab, void *key)
 static void htab_extend(htab_t *htab)
 {
     size_t old_cap = htab->cap;
+    struct bucket *old_tab = htab->tab;
 
     htab->cap *= 2;
-    htab->tab = realloc(htab->tab, htab->cap * sizeof(*htab->tab));
-
-    /* Init new buckets */
-    for (size_t i = old_cap; i < htab->cap; ++i) {
-        intrlist_init(&htab->tab[i].list);
-    }
+    htab->tab = buck_tab_new(htab->cap);
 
     /* Relocate all entries if needed */
     for (size_t i = 0; i < old_cap; ++i) {
-        struct bucket *head = head_buck(htab, i);
+        struct bucket *head = &old_tab[i];
 
-        struct bucket *buck;
-        struct bucket *prev = head;
+        struct bucket *buck = NULL;
         intrlist_foreach(&head->list, buck, list) {
-            size_t new_index = htab->hfunc(buck->elm) % htab->cap;
-            if (new_index != i) {
-                /* Remove and push in new index */
-                intrlist_remove(&buck->list);
-                intrlist_push(&htab->tab[new_index].list, &buck->list);
-                buck = prev;
-            }
-
-            prev = buck;
+            size_t new_index = htab->hfunc(buck->key) % htab->cap;
+            intrlist_remove(&buck->list);
+            intrlist_push(&htab->tab[new_index].list, &buck->list);
+            buck = head;
         }
     }
+
+    free(old_tab);
+}
+
+static struct bucket *buck_tab_new(size_t cap)
+{
+    struct bucket *buck_tab = malloc(cap * sizeof(*buck_tab));
+
+    for (size_t i = 0; i < cap; ++i) {
+        intrlist_init(&buck_tab[i].list);
+    }
+
+    return buck_tab;
 }
 
 static struct bucket *buck_new(void *key, void *elm)
