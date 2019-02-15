@@ -10,6 +10,6 @@ add_subdirectory(htab)
 
 add_custom_target(test ALL
      COMMAND ${CMAKE_SOURCE_DIR}/test.sh
-     DEPENDS list list.test vect vect.test intrlist intrlist.test
+     DEPENDS list list.test vect vect.test intrlist intrlist.test htab htab.test
      COMMENT "Running test ..."
 )
