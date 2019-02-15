@@ -87,7 +87,16 @@ void *htab_del(htab_t *htab, void *key)
         return NULL;
     }
 
+    size_t index = htab->hfunc(key);
+    struct bucket *head = head_buck(htab, index);
+
     intrlist_remove(&buck->list);
+
+    if (intrlist_isempty(&head->list)) {
+        --htab->size;
+    }
+    --htab->nb_elm;
+
     return buck->elm;
 }
 
@@ -146,8 +155,7 @@ static struct bucket *find_buck(htab_t *htab, void *key)
 static struct bucket *buck_new(void *key, void *elm)
 {
     struct bucket *buck = malloc(sizeof(*buck));
-    if (!elm) {
-        free(buck);
+    if (!buck) {
         return NULL;
     }
 
